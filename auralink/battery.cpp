@@ -27,7 +27,7 @@ void manageChargingState() {
   }
 }
 
-void updateBatteryUI(bool force = false) {
+void updateBatteryUI(bool force) {
   static uint32_t lastUpdate = 0;
   uint32_t now = millis();
   //30s debounce
