@@ -6,7 +6,7 @@
 #include "ui.h"
 
 lv_obj_t * uic_AirQuality;
-lv_obj_t * uic_AirQuality1;
+lv_obj_t * uic_AirQualityLabel;
 lv_obj_t * uic_AirQualityContainer;
 lv_obj_t * uic_Illumination;
 lv_obj_t * uic_IlluminationImage;
@@ -33,7 +33,7 @@ lv_obj_t * ui_IlluminationUnit = NULL;
 lv_obj_t * ui_IlluminationBody = NULL;
 lv_obj_t * ui_Illumination = NULL;
 lv_obj_t * ui_AirQualityContainer = NULL;
-lv_obj_t * ui_AirQuality1 = NULL;
+lv_obj_t * ui_AirQualityLabel = NULL;
 lv_obj_t * ui_AirQualityImage = NULL;
 lv_obj_t * ui_AirQualityUnit = NULL;
 lv_obj_t * ui_AirQualityBody = NULL;
@@ -251,12 +251,12 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_outline_width(ui_AirQualityContainer, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_outline_pad(ui_AirQualityContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_AirQuality1 = lv_label_create(ui_AirQualityContainer);
-    lv_obj_set_width(ui_AirQuality1, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_AirQuality1, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_AirQuality1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_AirQuality1, "Air Quality");
-    lv_obj_set_style_text_font(ui_AirQuality1, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_AirQualityLabel = lv_label_create(ui_AirQualityContainer);
+    lv_obj_set_width(ui_AirQualityLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_AirQualityLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_AirQualityLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_AirQualityLabel, "Air Quality");
+    lv_obj_set_style_text_font(ui_AirQualityLabel, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_AirQualityImage = lv_img_create(ui_AirQualityContainer);
     lv_img_set_src(ui_AirQualityImage, &ui_img_aq_png);
@@ -272,10 +272,10 @@ void ui_Screen1_screen_init(void)
     ui_AirQualityUnit = lv_label_create(ui_AirQualityContainer);
     lv_obj_set_width(ui_AirQualityUnit, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_AirQualityUnit, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_AirQualityUnit, -23);
-    lv_obj_set_y(ui_AirQualityUnit, 16);
+    lv_obj_set_x(ui_AirQualityUnit, -21);
+    lv_obj_set_y(ui_AirQualityUnit, 15);
     lv_obj_set_align(ui_AirQualityUnit, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_AirQualityUnit, "PM");
+    lv_label_set_text(ui_AirQualityUnit, "AQI");
     lv_obj_add_flag(ui_AirQualityUnit, LV_OBJ_FLAG_IGNORE_LAYOUT);     /// Flags
     lv_obj_set_style_text_font(ui_AirQualityUnit, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -520,7 +520,7 @@ void ui_Screen1_screen_init(void)
     uic_IlluminationImage = ui_IlluminationImage;
     uic_Illumination = ui_Illumination;
     uic_AirQualityContainer = ui_AirQualityContainer;
-    uic_AirQuality1 = ui_AirQuality1;
+    uic_AirQualityLabel = ui_AirQualityLabel;
     uic_AirQuality = ui_AirQuality;
 
 }
@@ -556,8 +556,8 @@ void ui_Screen1_screen_destroy(void)
     ui_Illumination = NULL;
     uic_AirQualityContainer = NULL;
     ui_AirQualityContainer = NULL;
-    uic_AirQuality1 = NULL;
-    ui_AirQuality1 = NULL;
+    uic_AirQualityLabel = NULL;
+    ui_AirQualityLabel = NULL;
     ui_AirQualityImage = NULL;
     ui_AirQualityUnit = NULL;
     ui_AirQualityBody = NULL;

@@ -6,6 +6,7 @@
 #include "battery.h"
 #include "illumination.h"
 #include "thermohygrometer.h"
+#include "airquality.h"
 #include "wifi.h"
 
 constexpr uint8_t I2C_SDA_PIN = 17;
@@ -136,6 +137,8 @@ void setup() {
     Serial.println("[THERMOHYGROMETER] init failed — check wiring/type.");
   }
 
+  airQuality.begin(8, 10.0, 76.63, 5.0);  // MQ135 on pin 8
+
 }
 
 void loop() {
@@ -152,7 +155,10 @@ void loop() {
   
   thermohygrometer.read();
   updateThermohygrometerUI(false);
-  
+
+  airQuality.read();
+  updateAirQualityUI(false);
+
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
 }

@@ -1,4 +1,5 @@
 #include "illumination.h"
+#include "danger.h"
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
@@ -34,6 +35,9 @@ void updateIlluminationUI(bool force) {
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
     }
 
+    ColorOpacity co = getDangerColorIllumination(lux_avg);
+    lv_obj_set_style_bg_color(ui_IlluminationContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_IlluminationContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text_fmt(ui_Illumination, "%.2f", lux_avg);
     Serial.printf("[ILLUMINATION]: imm=%.2f avg=%.2f\n", lux_imm, lux_avg);
 }

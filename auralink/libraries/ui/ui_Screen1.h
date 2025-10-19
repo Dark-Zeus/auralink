@@ -31,7 +31,7 @@ extern lv_obj_t * ui_IlluminationUnit;
 extern lv_obj_t * ui_IlluminationBody;
 extern lv_obj_t * ui_Illumination;
 extern lv_obj_t * ui_AirQualityContainer;
-extern lv_obj_t * ui_AirQuality1;
+extern lv_obj_t * ui_AirQualityLabel;
 extern lv_obj_t * ui_AirQualityImage;
 extern lv_obj_t * ui_AirQualityUnit;
 extern lv_obj_t * ui_AirQualityBody;
@@ -69,7 +69,7 @@ extern lv_obj_t * uic_IlluminationLabel;
 extern lv_obj_t * uic_IlluminationImage;
 extern lv_obj_t * uic_Illumination;
 extern lv_obj_t * uic_AirQualityContainer;
-extern lv_obj_t * uic_AirQuality1;
+extern lv_obj_t * uic_AirQualityLabel;
 extern lv_obj_t * uic_AirQuality;
 
 #ifdef __cplusplus

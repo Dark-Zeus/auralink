@@ -1,4 +1,5 @@
 #include "thermohygrometer.h"
+#include "danger.h"
 
 #include <TFT_eSPI.h>
 #include <lvgl.h>
@@ -7,6 +8,13 @@
 Thermohygrometer thermohygrometer(20);  // DHT22 on pin 42
 
 void updateThermohygrometerUI(bool force) {
+    static uint32_t lastUpdate = 0;
+    uint32_t now = millis();
+    if (now - lastUpdate < 300 && !force) {
+        return;
+    }
+    lastUpdate = now;
+
     static float lastAvgTemp = NAN;
     static float lastAvgHum = NAN;
 
@@ -15,14 +23,24 @@ void updateThermohygrometerUI(bool force) {
     float avgHum = avg.humidity;
 
     if (force || isnan(lastAvgTemp) || fabs(avgTemp - lastAvgTemp) >= 0.1f) {
+        ColorOpacity co = getDangerColorTemperature(avgTemp);
+        lv_obj_set_style_bg_color(ui_TemperatureContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa(ui_TemperatureContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_label_set_text_fmt(ui_Temperature, "%.1f", avgTemp);
         lastAvgTemp = avgTemp;
     }
 
     if (force || isnan(lastAvgHum) || fabs(avgHum - lastAvgHum) >= 0.1f) {
+        ColorOpacity co = getDangerColorHumidity(avgHum);
+        lv_obj_set_style_bg_color(ui_RelativeHumidityContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa(ui_RelativeHumidityContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_label_set_text_fmt(ui_RelativeHumidity, "%.1f", avgHum);
         lastAvgHum = avgHum;
     }
+
+    Serial.printf("[THERMOHYGROMETER]: temp_imm=%.2f temp_avg=%.2f hum_imm=%.2f hum_avg=%.2f\n",
+                  thermohygrometer.readImmediateTemperature(), avgTemp,
+                  thermohygrometer.readImmediateHumidity(), avgHum);
 }
 
 Thermohygrometer::Thermohygrometer(size_t window) : _window(window) {
