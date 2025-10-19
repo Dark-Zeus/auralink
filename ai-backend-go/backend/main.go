@@ -102,15 +102,11 @@ func placeholderEmailSummary(r common.Reading, siteName string) string {
 func main() {
 
 	// at top of main.go
-	const openAIKey = ""
+	//const openAIKey = ""
 
 	_ = godotenv.Load()
 
-<<<<<<< HEAD
 	apiKey := ""
-=======
-	apiKey := "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"
->>>>>>> cc468637f9ed92e365d82c82705b6fb8fcb6787f
 	host := common.GetenvDefault("MQTT_HOST", "localhost")
 	port := common.MustAtoi(common.GetenvDefault("MQTT_PORT", "1883"))
 	deviceID := common.GetenvDefault("DEVICE_ID", "pump-01")
