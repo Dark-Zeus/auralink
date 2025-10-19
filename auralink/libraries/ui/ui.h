@@ -41,6 +41,12 @@ extern lv_obj_t * ui____initial_actions0;
 // IMAGES AND IMAGE SETS
 LV_IMG_DECLARE(ui_img_wifiicon_png);    // assets/WifiIcon.png
 LV_IMG_DECLARE(ui_img_chargingicon_png);    // assets/ChargingIcon.png
+LV_IMG_DECLARE(ui_img_light_png);    // assets/light.png
+LV_IMG_DECLARE(ui_img_aq_png);    // assets/aq.png
+LV_IMG_DECLARE(ui_img_rh_png);    // assets/rh.png
+LV_IMG_DECLARE(ui_img_temperature_png);    // assets/temperature.png
+LV_IMG_DECLARE(ui_img_pressure_png);    // assets/pressure.png
+LV_IMG_DECLARE(ui_img_sound_png);    // assets/sound.png
 
 // UI INIT
 void ui_init(void);
