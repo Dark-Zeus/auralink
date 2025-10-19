@@ -1,4 +1,7 @@
 #include "battery.h"
+#include <TFT_eSPI.h>
+#include <lvgl.h>
+#include <ui.h>
 
 volatile bool chargerEvent = false;
 volatile bool chargerLevel = false;
@@ -31,14 +34,22 @@ void updateBatteryUI(bool force) {
   static uint32_t lastUpdate = 0;
   uint32_t now = millis();
   //30s debounce
-  if (now - lastUpdate < 30000 && !force) {
+  if (now - lastUpdate < 300 && !force) {
     return;
   }
   lastUpdate = now;
 
   float a = battery.average();  // averaged 0..4095
-  float v = battery.voltage(3.0f, 4.2f, 300, 2150);
-  int p = battery.percent(3.0f, 4.2f, 300, 2150);
+  int reading_ciel = 2300;
+  int reading_floor = 300;
+
+  if (battery.isCharging()) {
+    reading_ciel = 3900;
+    reading_floor = 300;
+  }
+
+  float v = battery.voltage(3.0f, 4.2f, reading_floor, reading_ciel);
+  int p = battery.percent(3.0f, 4.2f, reading_floor, reading_ciel);
 
   lv_color_t c = (p <= 20)   ? lv_color_hex(0xC60047)
                  : (p <= 50) ? lv_color_hex(0xFFF500)
@@ -52,7 +63,7 @@ void updateBatteryUI(bool force) {
   lv_bar_set_value(ui_Battery, p, LV_ANIM_ON);
   lv_label_set_text_fmt(ui_BatteryText, "%d%%", p);
 
-  Serial.printf("Battery: raw=%.1f V=%.2fV %d%%\n", a, v, p);
+  Serial.printf("[BATTERY]: raw=%.1f V=%.2fV %d%%\n", a, v, p);
 }
 
 void IRAM_ATTR charger_isr() {
@@ -84,21 +95,9 @@ void Battery::reset() {
   }
 }
 
-void Battery::add(uint16_t v) {
-  if (!_buf || _window == 0) return;
-
-  if (_count < _window) {
-    _sum += v;
-    _buf[_idx++] = v;
-    _count++;
-    if (_idx == _window) _idx = 0;
-  } else {
-    // window full: subtract outgoing, add incoming
-    _sum -= _buf[_idx];
-    _sum += v;
-    _buf[_idx++] = v;
-    if (_idx == _window) _idx = 0;
-  }
+void Battery::read(){
+  uint16_t v = analogRead(BATTERY_LEVEL_PIN);
+  add(v);
 }
 
 float Battery::average() const {
@@ -142,4 +141,21 @@ int Battery::percent(float v_min, float v_max,
     }
   }
   return 0;  // unreachable
+}
+
+void Battery::add(uint16_t v) {
+  if (!_buf || _window == 0) return;
+
+  if (_count < _window) {
+    _sum += v;
+    _buf[_idx++] = v;
+    _count++;
+    if (_idx == _window) _idx = 0;
+  } else {
+    // window full: subtract outgoing, add incoming
+    _sum -= _buf[_idx];
+    _sum += v;
+    _buf[_idx++] = v;
+    if (_idx == _window) _idx = 0;
+  }
 }

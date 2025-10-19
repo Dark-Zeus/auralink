@@ -4,8 +4,17 @@
 #include <ui.h>
 
 #include "battery.h"
+#include "illumination.h"
+#include "thermohygrometer.h"
 #include "wifi.h"
 
+constexpr uint8_t I2C_SDA_PIN = 17;
+constexpr uint8_t I2C_SCL_PIN = 18;
+
+constexpr uint8_t DHT_PIN = 42;
+constexpr uint8_t DHT_TYPE = DHT22;
+
+constexpr uint16_t ILLUMINATION_SENSOR_ADDRESS = 0x5C;
 /*Don't forget to set Sketchbook location in File/Preferences to the path of your UI project (the parent foder of this INO file)*/
 
 /*Change to your screen resolution*/
@@ -112,8 +121,21 @@ void setup() {
   chargerLevel = digitalRead(BATTERY_CHARGER_PIN);
   manageChargingState();
   attachInterrupt(digitalPinToInterrupt(BATTERY_CHARGER_PIN), charger_isr, CHANGE);
-
+  battery.read();
   updateBatteryUI(true);
+
+  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+  Wire.setClock(100000);
+  Wire.setTimeout(20);
+
+  if (!illuminationMeter.begin(ILLUMINATION_SENSOR_ADDRESS, &Wire)) {
+    Serial.println("[ILLUMINATION] init failed — check wiring/address.");
+  }
+
+  if (!thermohygrometer.begin(DHT_PIN, DHT_TYPE)) {
+    Serial.println("[THERMOHYGROMETER] init failed — check wiring/type.");
+  }
+
 }
 
 void loop() {
@@ -122,11 +144,15 @@ void loop() {
     manageChargingState();
   }
 
-  uint16_t raw = analogRead(BATTERY_LEVEL_PIN);
-  battery.add(raw);
-
+  battery.read();
   updateBatteryUI(false);
 
+  illuminationMeter.read();
+  updateIlluminationUI(false);
+  
+  thermohygrometer.read();
+  updateThermohygrometerUI(false);
+  
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
 }
