@@ -2435,12 +2435,12 @@
                       {
                         "nid": 10,
                         "strtype": "OBJECT/Name",
-                        "strval": "AirQuality1",
+                        "strval": "AirQualityLabel",
                         "childs": [
                           {
                             "nid": 15,
                             "strtype": "_codename/Codename",
-                            "strval": "AirQuality1",
+                            "strval": "AirQualityLabel",
                             "InheritedType": 10
                           }
                         ],
@@ -2800,8 +2800,8 @@
                         "flags": 17,
                         "strtype": "OBJECT/Position",
                         "intarray": [
-                          -23,
-                          16
+                          -21,
+                          15
                         ],
                         "InheritedType": 7
                       },
@@ -2888,7 +2888,7 @@
                       {
                         "nid": 1030,
                         "strtype": "LABEL/Text",
-                        "strval": "PM",
+                        "strval": "AQI",
                         "InheritedType": 10
                       },
                       {
@@ -3377,8 +3377,7 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "CONTAINER",
-                "tree_closed": true
+                "saved_objtypeKey": "CONTAINER"
               },
               {
                 "guid": "GUID42938122-289961S8064292",
@@ -5665,7 +5664,7 @@
                         "flags": 17,
                         "strtype": "OBJECT/Position",
                         "intarray": [
-                          -25,
+                          -21,
                           16
                         ],
                         "InheritedType": 7
@@ -5753,7 +5752,7 @@
                       {
                         "nid": 1030,
                         "strtype": "LABEL/Text",
-                        "strval": "Pa",
+                        "strval": "hPa",
                         "InheritedType": 10
                       },
                       {
@@ -7525,7 +7524,7 @@
     "uiExportFolderPath": "C:\\Users\\DarkZeus\\OneDrive - Sri Lanka Institute of Information Technology\\Year 4 Semester 1\\IT4030 (IOT)\\Project\\auralink\\libraries\\ui",
     "projectExportFolderPath": "C:/Users/DarkZeus/OneDrive - Sri Lanka Institute of Information Technology/Year 4 Semester 1/IT4030 (IOT)/Project/Examples/tft/ui/AuraLink",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 37,
+    "backup_cnt": 38,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

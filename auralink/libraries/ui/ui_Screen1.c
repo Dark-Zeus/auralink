@@ -437,10 +437,10 @@ void ui_Screen1_screen_init(void)
     ui_PressureUnit = lv_label_create(ui_PressureContainer);
     lv_obj_set_width(ui_PressureUnit, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_PressureUnit, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_PressureUnit, -25);
+    lv_obj_set_x(ui_PressureUnit, -21);
     lv_obj_set_y(ui_PressureUnit, 16);
     lv_obj_set_align(ui_PressureUnit, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_PressureUnit, "Pa");
+    lv_label_set_text(ui_PressureUnit, "hPa");
     lv_obj_add_flag(ui_PressureUnit, LV_OBJ_FLAG_IGNORE_LAYOUT);     /// Flags
     lv_obj_set_style_text_font(ui_PressureUnit, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
 
