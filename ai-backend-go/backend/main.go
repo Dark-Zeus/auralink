@@ -49,7 +49,7 @@ func makeQuote(ctx context.Context, apiKey string, r common.Reading, siteName st
 	user := fmt.Sprintf("Conditions: %s\nQuote:", contextLine)
 
 	body := oaReq{
-		Model: "gpt-3o",
+		Model: "gpt-4o-mini",
 		Input: []oaInput{
 			{Role: "system", Content: system},
 			{Role: "user", Content: user},
@@ -101,8 +101,6 @@ func placeholderEmailSummary(r common.Reading, siteName string) string {
 
 func main() {
 
-	// at top of main.go
-	//const openAIKey = ""
 
 	_ = godotenv.Load()
 
