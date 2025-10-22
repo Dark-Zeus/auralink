@@ -10,7 +10,7 @@
 #include "thermohygrometer.h"
 #include "airquality.h"
 #include "pressure.h"
-#include "wifi.h"
+#include "wifi_connector.h"
 
 constexpr uint8_t I2C_SDA_PIN = 17;
 constexpr uint8_t I2C_SCL_PIN = 18;
@@ -38,6 +38,9 @@ extern lv_obj_t* ui_EmailSummary;
 static lv_obj_t* gScreens[3];
 static const uint8_t gScreenCount = 3;  
 
+WifiConnector::Params wifiParams; // tweak if needed
+WifiConnector wifi(wifiParams);
+
 void setup() {
   Serial.begin(115200); /* prepare for possible serial debug */
 
@@ -58,6 +61,13 @@ void setup() {
   gScreens[1] = ui_DailyQuote;
   gScreens[2] = ui_EmailSummary;
   displayManager.begin(gScreens, gScreenCount);
+
+  wifi.begin("DarkZeus4G", "dzeus2002");
+  if (wifi.waitForConnect(15000)) {
+    Serial.println("[WIFI] Connected successfully.");
+  } else {
+    Serial.println("[WIFI] Connection timed out.");
+  }
 
   analogReadResolution(12);                              // 0..4095
   analogSetPinAttenuation(BATTERY_LEVEL_PIN, ADC_11db);  // up to ~3.3V full-scale
@@ -94,6 +104,7 @@ void setup() {
 void loop() {
   
   displayManager.loop();
+  wifi.loop(); 
 
   if (chargerEvent) {
     manageChargingState();

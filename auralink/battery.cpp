@@ -18,19 +18,19 @@ void manageChargingState() {
   battery.setCharging(lvl);              // update model
   bool charging = battery.isCharging();  // query model
 
-  Serial.print("Charging state changed: ");
+  Serial.print("[BATTERY] Charging state changed: ");
   Serial.println(charging ? "CHARGING" : "NOT CHARGING");
 
   if (charging) {
     lv_obj_clear_flag(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
-    Serial.println("Showing charging icon");
+    Serial.println("[BATTERY] Showing charging icon");
   } else {
     lv_obj_add_flag(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
-    Serial.println("Hiding charging icon");
+    Serial.println("[BATTERY] Hiding charging icon");
   }
 }
 

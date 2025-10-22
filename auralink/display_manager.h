@@ -4,12 +4,12 @@
 class DisplayManager {
 public:
   struct Params {
-    uint32_t rotate_interval_ms = 5000;   // ~5s per screen
-    uint32_t anim_time_ms       = 300;    // screen switch animation
-    uint32_t debounce_ms        = 90;     // button debounce
-    bool     active_high        = true;   // true if module outputs HIGH when touched
-    bool     set_pinmode        = true;   // set pinMode() inside begin()
-    uint8_t  pinmode            = 0x0;    // INPUT / INPUT_PULLUP / INPUT_PULLDOWN
+    uint32_t rotate_interval_ms = 5000;
+    uint32_t anim_time_ms       = 300;
+    uint32_t debounce_ms        = 90;
+    bool     active_high        = true;
+    bool     set_pinmode        = true;
+    uint8_t  pinmode            = 0x0;
   };
 
   DisplayManager(int leftPin, int rightPin);
