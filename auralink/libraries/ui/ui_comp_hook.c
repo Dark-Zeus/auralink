@@ -8,3 +8,7 @@
 void ui_comp_WifiIcon_create_hook(lv_obj_t * comp)
 {
 }
+
+void ui_comp_NotificationBar_create_hook(lv_obj_t * comp)
+{
+}

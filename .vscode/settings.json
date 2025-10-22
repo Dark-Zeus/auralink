@@ -9,6 +9,8 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "xmemory": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "ui_EmailSummary.h": "c",
+        "ui_emailsummary.h": "c"
     }
 }

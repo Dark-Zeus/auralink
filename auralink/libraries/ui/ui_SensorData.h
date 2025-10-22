@@ -3,26 +3,18 @@
 // LVGL version: 8.3.11
 // Project name: AuraLink
 
-#ifndef UI_SCREEN1_H
-#define UI_SCREEN1_H
+#ifndef UI_SENSORDATA_H
+#define UI_SENSORDATA_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// SCREEN: ui_Screen1
-extern void ui_Screen1_screen_init(void);
-extern void ui_Screen1_screen_destroy(void);
-extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_NotificationBar;
-extern lv_obj_t * ui_TimeContainer;
-extern lv_obj_t * ui_Time;
-extern lv_obj_t * ui_WifiIconContainer;
-extern lv_obj_t * ui_WifiIcon1;
-extern lv_obj_t * ui_BatteryText;
-extern lv_obj_t * ui_BatteryContainer;
-extern lv_obj_t * ui_Battery;
-extern lv_obj_t * ui_ChargingIcon;
+// SCREEN: ui_SensorData
+extern void ui_SensorData_screen_init(void);
+extern void ui_SensorData_screen_destroy(void);
+extern lv_obj_t * ui_SensorData;
+extern lv_obj_t * ui_SDNotificationBar;
 extern lv_obj_t * ui_Body;
 extern lv_obj_t * ui_IlluminationContainer;
 extern lv_obj_t * ui_IlluminationLabel;
@@ -60,17 +52,22 @@ extern lv_obj_t * ui_SoundImage;
 extern lv_obj_t * ui_SoundUnit;
 extern lv_obj_t * ui_SoundBody;
 extern lv_obj_t * ui_Sound;
+extern lv_obj_t * ui_Navigation;
+extern lv_obj_t * ui_Tab1;
+extern lv_obj_t * ui_SensorTabLabel;
+extern lv_obj_t * ui_Tab2;
+extern lv_obj_t * ui_QuoteTabLabel;
+extern lv_obj_t * ui_Tab3;
+extern lv_obj_t * ui_EmailTabLabel;
 // CUSTOM VARIABLES
-extern lv_obj_t * uic_TimeContainer;
-extern lv_obj_t * uic_Time;
-extern lv_obj_t * uic_WifiIconContainer;
-extern lv_obj_t * uic_ChargingIcon;
+extern lv_obj_t * uic_SensorData;
 extern lv_obj_t * uic_IlluminationLabel;
 extern lv_obj_t * uic_IlluminationImage;
 extern lv_obj_t * uic_Illumination;
 extern lv_obj_t * uic_AirQualityContainer;
 extern lv_obj_t * uic_AirQualityLabel;
 extern lv_obj_t * uic_AirQuality;
+extern lv_obj_t * uic_Navigation;
 
 #ifdef __cplusplus
 } /*extern "C"*/

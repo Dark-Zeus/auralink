@@ -29,7 +29,9 @@ extern "C" {
 
 ///////////////////// SCREENS ////////////////////
 
-#include "ui_Screen1.h"
+#include "ui_SensorData.h"
+#include "ui_DailyQuote.h"
+#include "ui_EmailSummary.h"
 
 ///////////////////// VARIABLES ////////////////////
 

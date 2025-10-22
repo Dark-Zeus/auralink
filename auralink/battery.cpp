@@ -22,10 +22,14 @@ void manageChargingState() {
   Serial.println(charging ? "CHARGING" : "NOT CHARGING");
 
   if (charging) {
-    lv_obj_clear_flag(ui_ChargingIcon, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     Serial.println("Showing charging icon");
   } else {
-    lv_obj_add_flag(ui_ChargingIcon, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON), LV_OBJ_FLAG_HIDDEN);
     Serial.println("Hiding charging icon");
   }
 }
@@ -44,7 +48,7 @@ void updateBatteryUI(bool force) {
   int reading_floor = 300;
 
   if (battery.isCharging()) {
-    reading_ciel = 3900;
+    reading_ciel = 2300;
     reading_floor = 300;
   }
 
@@ -55,13 +59,26 @@ void updateBatteryUI(bool force) {
                  : (p <= 50) ? lv_color_hex(0xFFF500)
                              : lv_color_hex(0x2095F6);
 
-  lv_obj_set_style_bg_color(ui_Battery, c, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_opa(ui_Battery, LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_grad_dir(ui_Battery, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), c, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), c, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), c, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+  lv_obj_set_style_bg_opa(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_opa(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_opa(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+  lv_obj_set_style_bg_grad_dir(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_dir(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_dir(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
 
-  lv_bar_set_value(ui_Battery, p, LV_ANIM_ON);
-  lv_label_set_text_fmt(ui_BatteryText, "%d%%", p);
+  lv_bar_set_value(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), p, LV_ANIM_ON);
+  lv_bar_set_value(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), p, LV_ANIM_ON);
+  lv_bar_set_value(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), p, LV_ANIM_ON);
+
+  lv_label_set_text_fmt(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
+  lv_label_set_text_fmt(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
+  lv_label_set_text_fmt(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
 
   Serial.printf("[BATTERY]: raw=%.1f V=%.2fV %d%%\n", a, v, p);
 }
@@ -118,11 +135,11 @@ float Battery::voltage(float v_min, float v_max,
 
 int Battery::percent(float v_min, float v_max,
                      uint16_t raw_min, uint16_t raw_max) const {
-  // 1) get VBAT from avg
+  // get VBAT from avg
   float v = voltage(v_min, v_max, raw_min, raw_max);
 
-  // 2) piecewise Li-ion curve (approximate, tweak as needed)
-  //    points: {voltage, percent}
+  // piecewise Li-ion curve (approximate, tweak as needed)
+  // points: {voltage, percent}
   static const struct {
     float v;
     int p;
