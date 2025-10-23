@@ -41,6 +41,8 @@ extern "C" {
 extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
+LV_IMG_DECLARE(ui_img_pub_png);    // assets/pub.png
+LV_IMG_DECLARE(ui_img_sub_png);    // assets/sub.png
 LV_IMG_DECLARE(ui_img_wifiicon_png);    // assets/WifiIcon.png
 LV_IMG_DECLARE(ui_img_chargingicon_png);    // assets/ChargingIcon.png
 LV_IMG_DECLARE(ui_img_light_png);    // assets/light.png

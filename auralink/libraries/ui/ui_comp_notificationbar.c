@@ -19,7 +19,7 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_obj_set_y(cui_NotificationBar, -72);
     lv_obj_set_align(cui_NotificationBar, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(cui_NotificationBar, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(cui_NotificationBar, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_flex_align(cui_NotificationBar, LV_FLEX_ALIGN_SPACE_AROUND, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(cui_NotificationBar, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(cui_NotificationBar, lv_color_hex(0x000D1E), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(cui_NotificationBar, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -27,7 +27,7 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_obj_t * cui_TimeContainer;
     cui_TimeContainer = lv_obj_create(cui_NotificationBar);
     lv_obj_remove_style_all(cui_TimeContainer);
-    lv_obj_set_width(cui_TimeContainer, 49);
+    lv_obj_set_width(cui_TimeContainer, 37);
     lv_obj_set_height(cui_TimeContainer, lv_pct(100));
     lv_obj_set_align(cui_TimeContainer, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(cui_TimeContainer, LV_FLEX_FLOW_ROW);
@@ -37,7 +37,7 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_obj_t * cui_Time;
     cui_Time = lv_label_create(cui_TimeContainer);
     lv_obj_set_height(cui_Time, 12);
-    lv_obj_set_width(cui_Time, lv_pct(55));
+    lv_obj_set_width(cui_Time, LV_SIZE_CONTENT);   /// 55
     lv_obj_set_align(cui_Time, LV_ALIGN_CENTER);
     lv_label_set_text(cui_Time, "10:15");
     lv_obj_set_style_text_font(cui_Time, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -46,30 +46,90 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_obj_set_style_pad_top(cui_Time, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_bottom(cui_Time, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_t * cui_WifiIconContainer;
-    cui_WifiIconContainer = lv_obj_create(cui_NotificationBar);
-    lv_obj_remove_style_all(cui_WifiIconContainer);
-    lv_obj_set_width(cui_WifiIconContainer, 25);
-    lv_obj_set_height(cui_WifiIconContainer, 16);
-    lv_obj_set_x(cui_WifiIconContainer, 3);
-    lv_obj_set_y(cui_WifiIconContainer, -10);
-    lv_obj_set_align(cui_WifiIconContainer, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(cui_WifiIconContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_t * cui_PubSubContainer;
+    cui_PubSubContainer = lv_obj_create(cui_NotificationBar);
+    lv_obj_remove_style_all(cui_PubSubContainer);
+    lv_obj_set_width(cui_PubSubContainer, -7);
+    lv_obj_set_height(cui_PubSubContainer, 16);
+    lv_obj_set_x(cui_PubSubContainer, -5);
+    lv_obj_set_y(cui_PubSubContainer, -10);
+    lv_obj_set_align(cui_PubSubContainer, LV_ALIGN_CENTER);
+    lv_obj_set_flex_flow(cui_PubSubContainer, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(cui_PubSubContainer, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_add_flag(cui_PubSubContainer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);     /// Flags
+    lv_obj_clear_flag(cui_PubSubContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    lv_obj_t * cui_PubIcon;
+    cui_PubIcon = lv_img_create(cui_PubSubContainer);
+    lv_img_set_src(cui_PubIcon, &ui_img_pub_png);
+    lv_obj_set_width(cui_PubIcon, 20);
+    lv_obj_set_height(cui_PubIcon, 23);
+    lv_obj_set_x(cui_PubIcon, -14);
+    lv_obj_set_y(cui_PubIcon, -5);
+    lv_obj_set_align(cui_PubIcon, LV_ALIGN_CENTER);
+    lv_obj_add_flag(cui_PubIcon, LV_OBJ_FLAG_ADV_HITTEST | LV_OBJ_FLAG_IGNORE_LAYOUT);     /// Flags
+    lv_obj_clear_flag(cui_PubIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_zoom(cui_PubIcon, 96);
+    lv_obj_set_style_img_recolor(cui_PubIcon, lv_color_hex(0xFF0070), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_img_recolor_opa(cui_PubIcon, 999, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_t * cui_SubIcon;
+    cui_SubIcon = lv_img_create(cui_PubSubContainer);
+    lv_img_set_src(cui_SubIcon, &ui_img_sub_png);
+    lv_obj_set_width(cui_SubIcon, 27);
+    lv_obj_set_height(cui_SubIcon, 30);
+    lv_obj_set_x(cui_SubIcon, 11);
+    lv_obj_set_y(cui_SubIcon, 9);
+    lv_obj_set_align(cui_SubIcon, LV_ALIGN_CENTER);
+    lv_obj_add_flag(cui_SubIcon, LV_OBJ_FLAG_ADV_HITTEST | LV_OBJ_FLAG_FLOATING);     /// Flags
+    lv_obj_clear_flag(cui_SubIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(cui_SubIcon, -10, 0);
+    lv_img_set_zoom(cui_SubIcon, 96);
+    lv_obj_set_style_img_recolor(cui_SubIcon, lv_color_hex(0xFF0070), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_img_recolor_opa(cui_SubIcon, 999, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_t * cui_WifiContainer;
+    cui_WifiContainer = lv_obj_create(cui_NotificationBar);
+    lv_obj_remove_style_all(cui_WifiContainer);
+    lv_obj_set_width(cui_WifiContainer, 24);
+    lv_obj_set_height(cui_WifiContainer, 16);
+    lv_obj_set_x(cui_WifiContainer, -5);
+    lv_obj_set_y(cui_WifiContainer, -10);
+    lv_obj_set_align(cui_WifiContainer, LV_ALIGN_CENTER);
+    lv_obj_set_flex_flow(cui_WifiContainer, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(cui_WifiContainer, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_add_flag(cui_WifiContainer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);     /// Flags
+    lv_obj_clear_flag(cui_WifiContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_t * cui_WifiIcon;
-    cui_WifiIcon = lv_img_create(cui_WifiIconContainer);
+    cui_WifiIcon = lv_img_create(cui_WifiContainer);
     lv_img_set_src(cui_WifiIcon, &ui_img_wifiicon_png);
-    lv_obj_set_width(cui_WifiIcon, 28);
-    lv_obj_set_height(cui_WifiIcon, 16);
-    lv_obj_set_x(cui_WifiIcon, 3);
-    lv_obj_set_y(cui_WifiIcon, 0);
+    lv_obj_set_width(cui_WifiIcon, 20);
+    lv_obj_set_height(cui_WifiIcon, 23);
+    lv_obj_set_x(cui_WifiIcon, -15);
+    lv_obj_set_y(cui_WifiIcon, 1);
     lv_obj_set_align(cui_WifiIcon, LV_ALIGN_CENTER);
-    lv_obj_add_flag(cui_WifiIcon, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_add_flag(cui_WifiIcon, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(cui_WifiIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_zoom(cui_WifiIcon, 192);
+    lv_img_set_pivot(cui_WifiIcon, -10, 6);
+    lv_img_set_zoom(cui_WifiIcon, 190);
+    lv_obj_set_style_img_recolor(cui_WifiIcon, lv_color_hex(0xFF0070), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_img_recolor_opa(cui_WifiIcon, 999, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_t * cui_BatteryContainer;
+    cui_BatteryContainer = lv_obj_create(cui_NotificationBar);
+    lv_obj_remove_style_all(cui_BatteryContainer);
+    lv_obj_set_height(cui_BatteryContainer, 16);
+    lv_obj_set_width(cui_BatteryContainer, LV_SIZE_CONTENT);   /// -1
+    lv_obj_set_x(cui_BatteryContainer, -26);
+    lv_obj_set_y(cui_BatteryContainer, 0);
+    lv_obj_set_align(cui_BatteryContainer, LV_ALIGN_CENTER);
+    lv_obj_set_flex_flow(cui_BatteryContainer, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(cui_BatteryContainer, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_clear_flag(cui_BatteryContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_t * cui_BatteryText;
-    cui_BatteryText = lv_label_create(cui_NotificationBar);
+    cui_BatteryText = lv_label_create(cui_BatteryContainer);
     lv_obj_set_width(cui_BatteryText, 25);
     lv_obj_set_height(cui_BatteryText, 12);
     lv_obj_set_x(cui_BatteryText, 8);
@@ -82,16 +142,6 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_obj_set_style_pad_right(cui_BatteryText, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(cui_BatteryText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_bottom(cui_BatteryText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_t * cui_BatteryContainer;
-    cui_BatteryContainer = lv_obj_create(cui_NotificationBar);
-    lv_obj_remove_style_all(cui_BatteryContainer);
-    lv_obj_set_width(cui_BatteryContainer, 22);
-    lv_obj_set_height(cui_BatteryContainer, 16);
-    lv_obj_set_x(cui_BatteryContainer, -26);
-    lv_obj_set_y(cui_BatteryContainer, 0);
-    lv_obj_set_align(cui_BatteryContainer, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(cui_BatteryContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_t * cui_Battery;
     cui_Battery = lv_bar_create(cui_BatteryContainer);
@@ -109,8 +159,10 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     lv_img_set_src(cui_ChargingIcon, &ui_img_chargingicon_png);
     lv_obj_set_width(cui_ChargingIcon, 16);
     lv_obj_set_height(cui_ChargingIcon, 16);
+    lv_obj_set_x(cui_ChargingIcon, 12);
+    lv_obj_set_y(cui_ChargingIcon, 0);
     lv_obj_set_align(cui_ChargingIcon, LV_ALIGN_CENTER);
-    lv_obj_add_flag(cui_ChargingIcon, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_add_flag(cui_ChargingIcon, LV_OBJ_FLAG_ADV_HITTEST | LV_OBJ_FLAG_IGNORE_LAYOUT);     /// Flags
     lv_obj_clear_flag(cui_ChargingIcon, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(cui_ChargingIcon, 192);
 
@@ -118,10 +170,13 @@ lv_obj_t * ui_NotificationBar_create(lv_obj_t * comp_parent)
     children[UI_COMP_NOTIFICATIONBAR_NOTIFICATIONBAR] = cui_NotificationBar;
     children[UI_COMP_NOTIFICATIONBAR_TIMECONTAINER] = cui_TimeContainer;
     children[UI_COMP_NOTIFICATIONBAR_TIMECONTAINER_TIME] = cui_Time;
-    children[UI_COMP_NOTIFICATIONBAR_WIFIICONCONTAINER] = cui_WifiIconContainer;
-    children[UI_COMP_NOTIFICATIONBAR_WIFIICONCONTAINER_WIFIICON] = cui_WifiIcon;
-    children[UI_COMP_NOTIFICATIONBAR_BATTERYTEXT] = cui_BatteryText;
+    children[UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER] = cui_PubSubContainer;
+    children[UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON] = cui_PubIcon;
+    children[UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON] = cui_SubIcon;
+    children[UI_COMP_NOTIFICATIONBAR_WIFICONTAINER] = cui_WifiContainer;
+    children[UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON] = cui_WifiIcon;
     children[UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER] = cui_BatteryContainer;
+    children[UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERYTEXT] = cui_BatteryText;
     children[UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY] = cui_Battery;
     children[UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_CHARGINGICON] = cui_ChargingIcon;
     lv_obj_add_event_cb(cui_NotificationBar, get_component_child_event_cb, LV_EVENT_GET_COMP_CHILD, children);
