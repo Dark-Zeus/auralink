@@ -1,9 +1,9 @@
 #include "display_manager.h"
+
 #include <Arduino.h>
 
 DisplayManager* DisplayManager::_self = nullptr;
 
-// Delegating ctor keeps default Params but avoids header default-arg issue
 DisplayManager::DisplayManager(int leftPin, int rightPin)
 : DisplayManager(leftPin, rightPin, Params{}) {}
 
@@ -20,13 +20,12 @@ void DisplayManager::begin(lv_obj_t** screens, uint8_t screen_count) {
   _count   = screen_count;
   _idx     = 0;
 
-  // --- Sanity: count how many non-null screens we actually have
+  // Sanity: count how many non-null screens we actually have
   uint8_t valid = 0;
   for (uint8_t i = 0; i < _count; ++i) if (_screens[i]) ++valid;
 
   if (valid == 0) {
     Serial.println("[DisplayManager] ERROR: All screens are null. Did ui_init() run? Do names match?");
-    // Keep running but do not create timer; avoids crash
     _screens = nullptr; _count = 0;
     return;
   }
@@ -62,7 +61,6 @@ void DisplayManager::next() {
     uint8_t n = (uint8_t)((_idx + step) % _count);
     if (_screens[n]) { _load(n, LV_SCR_LOAD_ANIM_MOVE_LEFT); _resetTimer(); return; }
   }
-  // no valid target found; do nothing
 }
 
 void DisplayManager::prev() {
@@ -84,19 +82,16 @@ void DisplayManager::setActive(uint8_t idx) {
   _resetTimer();
 }
 
-/* ---------- private ---------- */
 void DisplayManager::_rotate_cb(lv_timer_t* /*t*/) {
   if (_self) _self->_rotate();
 }
 
 void DisplayManager::_rotate() {
   if (!_count || !_screens) return;
-  // rotate to next non-null
   for (uint8_t step = 1; step <= _count; ++step) {
     uint8_t n = (uint8_t)((_idx + step) % _count);
     if (_screens[n]) { _load(n, LV_SCR_LOAD_ANIM_MOVE_LEFT); return; }
   }
-  // no move if only current is valid
 }
 
 void DisplayManager::_resetTimer() {
@@ -112,7 +107,6 @@ void DisplayManager::_load(uint8_t idx, lv_scr_load_anim_t anim) {
   _idx = idx;
 }
 
-// Returns true on press *edge*
 bool DisplayManager::_pollBtn(Btn& b) {
   uint32_t now = millis();
   int raw = digitalRead(b.pin);

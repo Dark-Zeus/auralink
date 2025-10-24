@@ -1,4 +1,5 @@
 #include "display.h"
+
 #include <Arduino.h>
 
 bool Display::begin(uint16_t w, uint16_t h, uint8_t rotation) {

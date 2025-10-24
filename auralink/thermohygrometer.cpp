@@ -1,3 +1,4 @@
+#include "User_Setup.h"
 #include "thermohygrometer.h"
 #include "danger.h"
 
@@ -10,7 +11,7 @@ Thermohygrometer thermohygrometer(20);  // DHT22 on pin 42
 void updateThermohygrometerUI(bool force) {
     static uint32_t lastUpdate = 0;
     uint32_t now = millis();
-    if (now - lastUpdate < 300 && !force) {
+    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) {
         return;
     }
     lastUpdate = now;

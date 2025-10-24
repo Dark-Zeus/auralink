@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <IPAddress.h>   // for IPAddress
 
+void updateWifiUI(bool force = false, bool isConnected = false, int32_t rssi = 0);
 // Forward-declare only; include <WiFi.h> in the .cpp to avoid header collisions
 class WifiConnector {
 public:

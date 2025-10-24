@@ -1554,7 +1554,8 @@
                         "InheritedType": 11
                       }
                     ],
-                    "saved_objtypeKey": "IMAGE"
+                    "saved_objtypeKey": "IMAGE",
+                    "tree_closed": true
                   },
                   {
                     "guid": "GUID33189158-302130S7624296",

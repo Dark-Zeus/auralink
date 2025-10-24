@@ -1,8 +1,11 @@
+#include "User_Setup.h"
 #include "airquality.h"
 #include "danger.h"
+
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
+#include <math.h>
 
 AirQuality airQuality(20);
 
@@ -23,9 +26,6 @@ void updateAirQualityUI(bool force) {
     lv_obj_set_style_bg_opa(ui_AirQualityContainer, co.opacity, LV_PART_MAIN);
     Serial.printf("[AIRQUALITY]: imm=%.0f avg=%.0f\n", imm, avg);
 }
-
-#include "airquality.h"
-#include <math.h>
 
 AirQuality::AirQuality(size_t window) : _window(window) {
   _buf = (_window > 0) ? new float[_window]() : nullptr;

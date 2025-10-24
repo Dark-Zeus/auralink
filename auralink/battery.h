@@ -4,9 +4,6 @@
 #include <lvgl.h>
 #include <ui.h>
 
-constexpr uint8_t BATTERY_CHARGER_PIN = 2;
-constexpr uint8_t BATTERY_LEVEL_PIN = 7;
-
 extern volatile bool chargerEvent;
 extern volatile bool chargerLevel;
 

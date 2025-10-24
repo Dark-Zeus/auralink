@@ -1,4 +1,6 @@
+#include "User_Setup.h"
 #include "battery.h"
+
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
@@ -44,12 +46,12 @@ void updateBatteryUI(bool force) {
   lastUpdate = now;
 
   float a = battery.average();  // averaged 0..4095
-  int reading_ciel = 2300;
-  int reading_floor = 300;
+  int reading_ciel = 2400;
+  int reading_floor = 1750;
 
   if (battery.isCharging()) {
-    reading_ciel = 2300;
-    reading_floor = 300;
+    reading_ciel = 2400;
+    reading_floor = 1750;
   }
 
   float v = battery.voltage(3.0f, 4.2f, reading_floor, reading_ciel);
@@ -76,9 +78,9 @@ void updateBatteryUI(bool force) {
   lv_bar_set_value(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), p, LV_ANIM_ON);
   lv_bar_set_value(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERY), p, LV_ANIM_ON);
 
-  lv_label_set_text_fmt(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
-  lv_label_set_text_fmt(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
-  lv_label_set_text_fmt(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYTEXT), "%d%%", p);
+  lv_label_set_text_fmt(ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERYTEXT), "%d%%", p);
+  lv_label_set_text_fmt(ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERYTEXT), "%d%%", p);
+  lv_label_set_text_fmt(ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_BATTERYCONTAINER_BATTERYTEXT), "%d%%", p);
 
   Serial.printf("[BATTERY]: raw=%.1f V=%.2fV %d%%\n", a, v, p);
 }

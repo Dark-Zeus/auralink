@@ -1,5 +1,7 @@
+#include "User_Setup.h"
 #include "illumination.h"
 #include "danger.h"
+
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
@@ -12,7 +14,7 @@ void updateIlluminationUI(bool force) {
     static uint32_t lastUpdate = 0;
     uint32_t now = millis();
     // 30s debounce
-    if (now - lastUpdate < 300 && !force) {
+    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) {
         return;
     }
     lastUpdate = now;
