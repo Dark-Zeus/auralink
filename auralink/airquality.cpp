@@ -1,6 +1,7 @@
 #include "User_Setup.h"
 #include "airquality.h"
 #include "danger.h"
+#include "lv_functions.h"
 
 #include <TFT_eSPI.h>
 #include <lvgl.h>
@@ -12,18 +13,18 @@ AirQuality airQuality(20);
 void updateAirQualityUI(bool force) {
     static uint32_t lastUpdate = 0;
     uint32_t now = millis();
-    if (now - lastUpdate < 300 && !force) {
-        return;
-    }
+    if ((now - lastUpdate) < 300 && !force) return;
     lastUpdate = now;
 
     float imm = airQuality.readImmediate();
     float avg = airQuality.average();
     ColorOpacity co = getDangerColorAirQuality(avg);
 
-    lv_label_set_text_fmt(ui_AirQuality, "%.0f", avg);
-    lv_obj_set_style_bg_color(ui_AirQualityContainer, co.color, LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(ui_AirQualityContainer, co.opacity, LV_PART_MAIN);
+    LV_SAFE(ui_AirQuality, lv_label_set_text_fmt(ui_AirQuality, "%.0f", avg));
+
+    LV_SAFE(ui_AirQualityContainer, lv_obj_set_style_bg_color(ui_AirQualityContainer, co.color, LV_PART_MAIN));
+    LV_SAFE(ui_AirQualityContainer, lv_obj_set_style_bg_opa(ui_AirQualityContainer, co.opacity, LV_PART_MAIN));
+
     Serial.printf("[AIRQUALITY]: imm=%.0f avg=%.0f\n", imm, avg);
 }
 

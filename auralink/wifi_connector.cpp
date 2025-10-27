@@ -1,4 +1,5 @@
 #include "wifi_connector.h"
+#include "lv_functions.h"
 
 #include <WiFi.h>  // ESP32 core header (brings wl_status_t, WL_CONNECTED, etc.)
 #include <lvgl.h>
@@ -10,14 +11,10 @@ void updateWifiUI(bool force, bool isConnected, int32_t rssi) {
     static lv_obj_t* ui_dq_WifiIcon = nullptr;
     static lv_obj_t* ui_es_WifiIcon = nullptr;
 
-    if (!ui_sd_WifiIcon)
-        ui_sd_WifiIcon = ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
-    if (!ui_dq_WifiIcon)
-        ui_dq_WifiIcon = ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
-    if (!ui_es_WifiIcon)
-        ui_es_WifiIcon = ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
-
-    if(!ui_sd_WifiIcon || !ui_dq_WifiIcon || !ui_es_WifiIcon) {
+    LV_TRY_FIND(ui_sd_WifiIcon, ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
+    LV_TRY_FIND(ui_dq_WifiIcon, ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
+    LV_TRY_FIND(ui_es_WifiIcon, ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_WIFICONTAINER_WIFIICON);
+    if (!lv_obj_ok(ui_sd_WifiIcon) && !lv_obj_ok(ui_dq_WifiIcon) && !lv_obj_ok(ui_es_WifiIcon)) {
         return;
     }
 
@@ -43,9 +40,10 @@ void updateWifiUI(bool force, bool isConnected, int32_t rssi) {
         color = lv_color_hex(0xFF0070);
     }
 
-    lv_obj_set_style_img_recolor(ui_sd_WifiIcon, color, LV_PART_MAIN);
-    lv_obj_set_style_img_recolor(ui_dq_WifiIcon, color, LV_PART_MAIN);
-    lv_obj_set_style_img_recolor(ui_es_WifiIcon, color, LV_PART_MAIN);
+    // Apply safely; no crashes if an icon vanished mid-update
+    LV_SAFE(ui_sd_WifiIcon, { lv_obj_set_style_img_recolor(ui_sd_WifiIcon, color, LV_PART_MAIN); });
+    LV_SAFE(ui_dq_WifiIcon, { lv_obj_set_style_img_recolor(ui_dq_WifiIcon, color, LV_PART_MAIN); });
+    LV_SAFE(ui_es_WifiIcon, { lv_obj_set_style_img_recolor(ui_es_WifiIcon, color, LV_PART_MAIN); });
 }
 
 WifiConnector::WifiConnector()

@@ -1,10 +1,12 @@
-#include "User_Setup.h"
 #include "illumination.h"
-#include "danger.h"
 
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
+
+#include "User_Setup.h"
+#include "danger.h"
+#include "lv_functions.h"
 
 BH1750 bh1750;
 
@@ -12,41 +14,48 @@ Illumination illuminationMeter(20);
 
 void updateIlluminationUI(bool force) {
     static uint32_t lastUpdate = 0;
+    static uint8_t lastFontIdx = 255;  // avoid redundant style writes
     uint32_t now = millis();
-    // 30s debounce
-    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) {
-        return;
-    }
+
+    if ((now - lastUpdate) < UI_SENSOR_UPDATE_INTERVAL_MS && !force) return;
     lastUpdate = now;
 
     float lux_imm = illuminationMeter.readImmediate();
     float lux_avg = illuminationMeter.average();
 
-    // update label text size based on digit count
-    if (lux_avg < 1000.0f) {
-        lv_obj_set_style_text_font(ui_Illumination, &lv_font_montserrat_14,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
-    } else if (lux_avg < 10000.0f) {
-        lv_obj_set_style_text_font(ui_Illumination, &lv_font_montserrat_12,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
-    } else if (lux_avg < 100000.0f) {
-        lv_obj_set_style_text_font(ui_Illumination, &lv_font_montserrat_10,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
-    } else {
-        lv_obj_set_style_text_font(ui_Illumination, &lv_font_montserrat_8,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+    // choose font by magnitude
+    uint8_t fontIdx =
+        (lux_avg < 1e3f) ? 14 : (lux_avg < 1e4f) ? 12
+                            : (lux_avg < 1e5f)   ? 10
+                                                 : 8;
+
+    const lv_font_t* font =
+        (fontIdx == 14) ? &lv_font_montserrat_14 : (fontIdx == 12) ? &lv_font_montserrat_12
+                                               : (fontIdx == 10)   ? &lv_font_montserrat_10
+                                                                   : &lv_font_montserrat_8;
+
+    // set font only if changed
+    if (fontIdx != lastFontIdx) {
+        LV_SAFE_DO(ui_Illumination, { lv_obj_set_style_text_font(_o, font, LV_PART_MAIN | LV_STATE_DEFAULT); });
+        lastFontIdx = fontIdx;
     }
 
+    // set background color/opacity safely
     ColorOpacity co = getDangerColorIllumination(lux_avg);
-    lv_obj_set_style_bg_color(ui_IlluminationContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_IlluminationContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text_fmt(ui_Illumination, "%.2f", lux_avg);
+    LV_SAFE_DO(ui_IlluminationContainer, {
+        lv_obj_set_style_bg_color(_o, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa(_o, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
+    });
+
+    // update label text safely
+    LV_SAFE_DO(ui_Illumination, { lv_label_set_text_fmt(_o, "%.2f", lux_avg); });
+
     Serial.printf("[ILLUMINATION]: imm=%.2f avg=%.2f\n", lux_imm, lux_avg);
 }
 
 Illumination::Illumination(size_t windowSize) : _window(windowSize) {
     _buf = (_window > 0) ? new float[_window]
-                         : nullptr;  // CHANGED: float buffer, zero-init
+                         : nullptr;
     reset();
 }
 

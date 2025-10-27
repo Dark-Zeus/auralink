@@ -6,9 +6,11 @@ bool Display::begin(uint16_t w, uint16_t h, uint8_t rotation) {
   _w = w; _h = h;
   _tft = TFT_eSPI(_w, _h);   // re-construct with dimensions
 
+  _tft.begin();
+  
   lv_init();
 
-  _tft.begin();
+
   _tft.setRotation(rotation);
 
   // allocate a modest LVGL draw buffer (1/10th of screen)

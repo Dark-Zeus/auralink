@@ -1,19 +1,29 @@
-#include "User_Setup.h"
 #include "thermohygrometer.h"
+#include "User_Setup.h"
 #include "danger.h"
+#include "lv_functions.h"
 
 #include <TFT_eSPI.h>
 #include <lvgl.h>
 #include <ui.h>
 
+
 Thermohygrometer thermohygrometer(20);  // DHT22 on pin 42
 
 void updateThermohygrometerUI(bool force) {
+    // One-time: watch these globals so they auto-NULL on LV_EVENT_DELETE
+    static bool _hooked = false;
+    if (!_hooked) {
+        LV_WATCH_DELETE(ui_TemperatureContainer, &ui_TemperatureContainer);
+        LV_WATCH_DELETE(ui_Temperature, &ui_Temperature);
+        LV_WATCH_DELETE(ui_RelativeHumidityContainer, &ui_RelativeHumidityContainer);
+        LV_WATCH_DELETE(ui_RelativeHumidity, &ui_RelativeHumidity);
+        _hooked = true;
+    }
+
     static uint32_t lastUpdate = 0;
     uint32_t now = millis();
-    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) {
-        return;
-    }
+    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) return;
     lastUpdate = now;
 
     static float lastAvgTemp = NAN;
@@ -23,19 +33,29 @@ void updateThermohygrometerUI(bool force) {
     float avgTemp = avg.temperature;
     float avgHum = avg.humidity;
 
-    if (force || isnan(lastAvgTemp) || fabs(avgTemp - lastAvgTemp) >= 0.1f) {
+    // Temperature block (guarded)
+    if (force || isnan(lastAvgTemp) || fabsf(avgTemp - lastAvgTemp) >= 0.1f) {
         ColorOpacity co = getDangerColorTemperature(avgTemp);
-        lv_obj_set_style_bg_color(ui_TemperatureContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_bg_opa(ui_TemperatureContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_label_set_text_fmt(ui_Temperature, "%.1f", avgTemp);
+
+        LV_SAFE(ui_TemperatureContainer, do {
+            lv_obj_set_style_bg_color(ui_TemperatureContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa  (ui_TemperatureContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT); } while (0));
+
+        LV_SAFE(ui_Temperature, lv_label_set_text_fmt(ui_Temperature, "%.1f", avgTemp));
+
         lastAvgTemp = avgTemp;
     }
 
-    if (force || isnan(lastAvgHum) || fabs(avgHum - lastAvgHum) >= 0.1f) {
+    // Humidity block (guarded)
+    if (force || isnan(lastAvgHum) || fabsf(avgHum - lastAvgHum) >= 0.1f) {
         ColorOpacity co = getDangerColorHumidity(avgHum);
-        lv_obj_set_style_bg_color(ui_RelativeHumidityContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_bg_opa(ui_RelativeHumidityContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_label_set_text_fmt(ui_RelativeHumidity, "%.1f", avgHum);
+
+        LV_SAFE(ui_RelativeHumidityContainer, do {
+            lv_obj_set_style_bg_color(ui_RelativeHumidityContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa  (ui_RelativeHumidityContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT); } while (0));
+
+        LV_SAFE(ui_RelativeHumidity, lv_label_set_text_fmt(ui_RelativeHumidity, "%.1f", avgHum));
+
         lastAvgHum = avgHum;
     }
 

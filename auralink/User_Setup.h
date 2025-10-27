@@ -57,11 +57,11 @@
 #define TFT_RGB_ORDER TFT_RGB   // fix common color swap on green-tab boards
 
 // --- Pin map (match your working Adafruit sketch) ---
-#define TFT_MOSI 13
 #define TFT_SCLK 14
-#define TFT_CS   6
-#define TFT_DC   5
-#define TFT_RST  4
+#define TFT_MOSI 13
+#define TFT_DC   12
+#define TFT_RST  11
+#define TFT_CS   10
 // Backlight pin (set HIGH in your sketch)
 #define TFT_BL    2
 

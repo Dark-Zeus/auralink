@@ -1,4 +1,5 @@
 #include "mqtt.h"
+#include "lv_functions.h"
 
 #include <PubSubClient.h>
 #include <TFT_eSPI.h>
@@ -15,21 +16,15 @@ void updateMqttUI(bool force, bool isConnected, bool isSub, bool isPub) {
     static lv_obj_t* ui_es_MQTTSubIcon = nullptr;
     static lv_obj_t* ui_es_MQTTPubIcon = nullptr;
 
-    if (!ui_es_MQTTPubIcon)
-        ui_es_MQTTPubIcon = ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
-    if (!ui_dq_MQTTPubIcon)
-        ui_dq_MQTTPubIcon = ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
-    if (!ui_sd_MQTTPubIcon)
-        ui_sd_MQTTPubIcon = ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
-    if (!ui_es_MQTTSubIcon)
-        ui_es_MQTTSubIcon = ui_comp_get_child(ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
-    if (!ui_dq_MQTTSubIcon)
-        ui_dq_MQTTSubIcon = ui_comp_get_child(ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
-    if (!ui_sd_MQTTSubIcon)
-        ui_sd_MQTTSubIcon = ui_comp_get_child(ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
+    LV_TRY_FIND(ui_es_MQTTPubIcon, ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
+    LV_TRY_FIND(ui_dq_MQTTPubIcon, ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
+    LV_TRY_FIND(ui_sd_MQTTPubIcon, ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_PUBICON);
+    LV_TRY_FIND(ui_es_MQTTSubIcon, ui_ESNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
+    LV_TRY_FIND(ui_dq_MQTTSubIcon, ui_DQNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
+    LV_TRY_FIND(ui_sd_MQTTSubIcon, ui_SDNotificationBar, UI_COMP_NOTIFICATIONBAR_PUBSUBCONTAINER_SUBICON);
 
-    if (!ui_sd_MQTTSubIcon || !ui_dq_MQTTSubIcon || !ui_es_MQTTSubIcon ||
-        !ui_sd_MQTTPubIcon || !ui_dq_MQTTPubIcon || !ui_es_MQTTPubIcon) {
+    if (!lv_obj_ok(ui_sd_MQTTSubIcon) && !lv_obj_ok(ui_dq_MQTTSubIcon) && !lv_obj_ok(ui_es_MQTTSubIcon) &&
+        !lv_obj_ok(ui_sd_MQTTPubIcon) && !lv_obj_ok(ui_dq_MQTTPubIcon) && !lv_obj_ok(ui_es_MQTTPubIcon)) {
         return;
     }
 
@@ -41,30 +36,25 @@ void updateMqttUI(bool force, bool isConnected, bool isSub, bool isPub) {
     if (isConnected && isSub) lastSubUpdate = now;
     if (isConnected && isPub) lastPubUpdate = now;
 
-    constexpr uint32_t PULSE_MS = 500;
+    enum { PULSE_MS = 500, MIN_IDLE_MS = 500 };
     const bool subPulsing = isConnected && (now - lastSubUpdate < PULSE_MS);
     const bool pubPulsing = isConnected && (now - lastPubUpdate < PULSE_MS);
     const bool pulseActive = subPulsing || pubPulsing;
 
-    if (!force && !pulseActive && (now - lastUpdate < 500)) return;
+    if (!force && !pulseActive && (now - lastUpdate < MIN_IDLE_MS)) return;
 
-    const lv_color_t base = isConnected ? lv_color_hex(0xFFFFFF) : lv_color_hex(0xFF0070);
-    lv_color_t colorSub = subPulsing ? lv_color_hex(0x2095F6) : base;
-    lv_color_t colorPub = pubPulsing ? lv_color_hex(0x00FF1B) : base;
+    const lv_color_t base     = isConnected ? lv_color_hex(0xFFFFFF) : lv_color_hex(0xFF0070);
+    const lv_color_t colorSub = subPulsing ? lv_color_hex(0x2095F6) : base;
+    const lv_color_t colorPub = pubPulsing ? lv_color_hex(0x00FF1B) : base;
 
-    auto apply = [](lv_obj_t* o, lv_color_t c) {
-        if (!o || !lv_obj_is_valid(o)) return;
-        lv_obj_set_style_img_recolor(o, c, LV_PART_MAIN);
-        lv_obj_set_style_img_recolor_opa(o, LV_OPA_COVER, LV_PART_MAIN);
-    };
+    /* Apply safely; no crashes if an icon vanished mid-update */
+    LV_ICON_RECOLOR_SAFE(ui_sd_MQTTSubIcon, colorSub);
+    LV_ICON_RECOLOR_SAFE(ui_dq_MQTTSubIcon, colorSub);
+    LV_ICON_RECOLOR_SAFE(ui_es_MQTTSubIcon, colorSub);
 
-    apply(ui_sd_MQTTSubIcon, colorSub);
-    apply(ui_dq_MQTTSubIcon, colorSub);
-    apply(ui_es_MQTTSubIcon, colorSub);
-
-    apply(ui_sd_MQTTPubIcon, colorPub);
-    apply(ui_dq_MQTTPubIcon, colorPub);
-    apply(ui_es_MQTTPubIcon, colorPub);
+    LV_ICON_RECOLOR_SAFE(ui_sd_MQTTPubIcon, colorPub);
+    LV_ICON_RECOLOR_SAFE(ui_dq_MQTTPubIcon, colorPub);
+    LV_ICON_RECOLOR_SAFE(ui_es_MQTTPubIcon, colorPub);
 
     if (!pulseActive) lastUpdate = now;
 }

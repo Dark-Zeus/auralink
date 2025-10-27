@@ -1,6 +1,7 @@
 #include "User_Setup.h"
 #include "pressure.h"
 #include "danger.h"
+#include "lv_functions.h"
 
 #include "TFT_eSPI.h"
 #include <lvgl.h>
@@ -10,24 +11,29 @@ Pressure pressureSensor(20);
 
 void updatePressureUI(bool force) {
     static uint32_t lastUpdate = 0;
-    uint32_t now = millis();
-    // 30s debounce
-    if (now - lastUpdate < UI_SENSOR_UPDATE_INTERVAL_MS && !force) {
-        return;
-    }
+    const uint32_t now = millis();
+
+    // debounce
+    if (!force && (now - lastUpdate) < UI_SENSOR_UPDATE_INTERVAL_MS) return;
     lastUpdate = now;
 
-    float pres_imm = pressureSensor.readImmediatePressure();
-    float temp_imm = pressureSensor.readImmediateTemperature();
-    float pres_avg = pressureSensor.averagePressure();
-    float temp_avg = pressureSensor.averageTemperature();
+    const float pres_imm = pressureSensor.readImmediatePressure();
+    const float temp_imm = pressureSensor.readImmediateTemperature();
+    const float pres_avg = pressureSensor.averagePressure();
+    const float temp_avg = pressureSensor.averageTemperature();
 
-    ColorOpacity co = getDangerColorPressure(pres_avg);
-    lv_obj_set_style_bg_color(ui_PressureContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_PressureContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text_fmt(ui_Pressure, "%.2f", pres_avg);
-    Serial.printf("[PRESSURE]: pres_imm=%.2f pres_avg=%.2f temp_imm=%.2f temp_avg=%.2f\n",
-                  pres_imm, pres_avg, temp_imm, temp_avg);
+    const ColorOpacity co = getDangerColorPressure(pres_avg);
+
+    LV_SAFE(ui_PressureContainer, {
+        lv_obj_set_style_bg_color(ui_PressureContainer, co.color, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa  (ui_PressureContainer, co.opacity, LV_PART_MAIN | LV_STATE_DEFAULT);
+    });
+
+    LV_SAFE(ui_Pressure, {
+        lv_label_set_text_fmt(ui_Pressure, "%.2f", pres_avg);
+    });
+
+    Serial.printf("[PRESSURE]: pres_imm=%.2f pres_avg=%.2f temp_imm=%.2f temp_avg=%.2f\n", pres_imm, pres_avg, temp_imm, temp_avg);
 }
 
 Pressure::Pressure(size_t window) : _bmp(), _window(window) {

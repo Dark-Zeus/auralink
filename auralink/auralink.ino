@@ -197,47 +197,47 @@ void setup() {
 
 void loop() {
   displayManager.loop();
-  wifi.loop();
-  updateWifiUI(false, wifi.isConnected(), wifi.rssi());
-  mqtt.loop();
-  updateMqttUI(false, mqtt.connected(), false, false);
+  // wifi.loop();
+  // updateWifiUI(false, wifi.isConnected(), wifi.rssi());
+  // mqtt.loop();
+  // updateMqttUI(false, mqtt.connected(), false, false);
 
-  if (chargerEvent) {
-    manageChargingState();
-  }
+  // if (chargerEvent) {
+  //   manageChargingState();
+  // }
 
-  battery.read();
-  updateBatteryUI(false);
+  // battery.read();
+  // updateBatteryUI(false);
 
-  illuminationMeter.read();
-  updateIlluminationUI(false);
+  // illuminationMeter.read();
+  // updateIlluminationUI(false);
 
-  thermohygrometer.read();
-  updateThermohygrometerUI(false);
+  // thermohygrometer.read();
+  // updateThermohygrometerUI(false);
 
-  airQuality.read();
-  updateAirQualityUI(false);
+  // airQuality.read();
+  // updateAirQualityUI(false);
 
-  pressureSensor.read();
-  updatePressureUI(false);
+  // pressureSensor.read();
+  // updatePressureUI(false);
 
-  static uint32_t last = 0;
-  if (millis() - last > SENSOR_PUBLISH_INTERVAL_MS && mqtt.connected()) {
-    last = millis();
+  // static uint32_t last = 0;
+  // if (millis() - last > SENSOR_PUBLISH_INTERVAL_MS && mqtt.connected()) {
+  //   last = millis();
 
-    StaticJsonDocument<256> doc;
-    doc["battery_percent"] = battery.percent();
-    doc["illumination_lux"] = illuminationMeter.average();
-    doc["temperature_c"] = thermohygrometer.average().temperature;
-    doc["humidity_percent"] = thermohygrometer.average().humidity;
-    doc["air_quality_aqi"] = airQuality.average();
-    doc["pressure_pa"] = pressureSensor.average().pressure;
+  //   StaticJsonDocument<256> doc;
+  //   doc["battery_percent"] = battery.percent();
+  //   doc["illumination_lux"] = illuminationMeter.average();
+  //   doc["temperature_c"] = thermohygrometer.average().temperature;
+  //   doc["humidity_percent"] = thermohygrometer.average().humidity;
+  //   doc["air_quality_aqi"] = airQuality.average();
+  //   doc["pressure_pa"] = pressureSensor.average().pressure;
 
-    char buf[256];
-    size_t n = serializeJson(doc, buf, sizeof(buf));
+  //   char buf[256];
+  //   size_t n = serializeJson(doc, buf, sizeof(buf));
 
-    onMqttPublish(MQTT_TOPIC_SENSOR, (const uint8_t*)buf, n, /*retain=*/false);
-  }
+  //   onMqttPublish(MQTT_TOPIC_SENSOR, (const uint8_t*)buf, n, /*retain=*/false);
+  // }
 
   display.loop();
   delay(5);
