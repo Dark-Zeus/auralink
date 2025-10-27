@@ -1,5 +1,6 @@
 #pragma once
-#include "lvgl.h"
+#include <lvgl.h>
+#include <ui.h>
 
 static inline bool lv_obj_ok(const lv_obj_t *o) { return o && lv_obj_is_valid(o); }
 

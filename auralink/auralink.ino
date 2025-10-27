@@ -209,8 +209,8 @@ void loop() {
   // battery.read();
   // updateBatteryUI(false);
 
-  // illuminationMeter.read();
-  // updateIlluminationUI(false);
+  illuminationMeter.read();
+  updateIlluminationUI(false);
 
   // thermohygrometer.read();
   // updateThermohygrometerUI(false);
