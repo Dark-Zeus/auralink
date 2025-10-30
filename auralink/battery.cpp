@@ -45,12 +45,12 @@ void updateBatteryUI(bool force) {
     lastUpdate = now;
 
     float a = battery.average();  // averaged 0..4095
-    int reading_ciel = 2400;
+    int reading_ciel = 2500;
     int reading_floor = 1750;
 
     if (battery.isCharging()) {
-        reading_ciel = 2400;
-        reading_floor = 1750;
+        reading_ciel = 2520;
+        reading_floor = 1770;
     }
 
     float v = battery.voltage(3.0f, 4.2f, reading_floor, reading_ciel);

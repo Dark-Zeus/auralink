@@ -13,9 +13,11 @@
 #include "mqtt.h"
 #include "pressure.h"
 #include "thermohygrometer.h"
-#include "wifi_connector.h"
+//#include "thb.h"
+#include "uv.h"
+#include "time_source.h"
 #include "update_ui.h"
-
+#include "wifi_connector.h"
 
 Display display;
 
@@ -34,10 +36,12 @@ WiFiClient net;
 
 MqttClient mqtt;
 
+UV uvSensor(20);
+
 void onMqttMessage(const String& topic, const uint8_t* payload, size_t len) {
   updateMqttUI(false, mqtt.connected(), true, false);
   Serial.printf("[MQTT] %s => %.*s\n", topic.c_str(), (int)len, (const char*)payload);
-  
+
   // Payload is json
   DynamicJsonDocument doc(512);
   DeserializationError error = deserializeJson(doc, payload, len);
@@ -154,7 +158,6 @@ void setup() {
   updateMqttUI(true, mqtt.connected(), false, false);
   mqtt.onMessage(onMqttMessage);
 
-
   if (mqtt.connectNow()) {
     Serial.println("[MQTT] Connected to broker.");
   } else {
@@ -178,6 +181,15 @@ void setup() {
   Wire.setClock(100000);
   Wire.setTimeout(20);
 
+  timeSource.begin(&Wire, GMT_OFFSET_SEC, NTP_SERVER);
+  if (wifi.isConnected()) {
+    Serial.println("[TIMESOURCE] Network connected; syncing time from NTP.");
+    timeSource.syncCurrentTime();
+  } else {
+    Serial.println("[TIMESOURCE] Network not connected; using RTC time.");
+  }
+  updateTimeSourceUI(true);
+
   if (!illuminationMeter.begin(ILLUMINATION_SENSOR_ADDRESS, &Wire)) {
     Serial.println("[ILLUMINATION] init failed — check wiring/address.");
   }
@@ -186,58 +198,77 @@ void setup() {
     Serial.println("[THERMOHYGROMETER] init failed — check wiring/type.");
   }
 
-  airQuality.begin(8, 10.0, 76.63, 5.0);  // MQ135 on pin 8
+  airQuality.begin(MQ135_PIN, 10.0, 76.63, 5.0);  // MQ135 on pin 8
 
   if (!pressureSensor.begin()) {
-    Serial.println("[PRESSURE] init failed — check wiring.");
+    Serial.println("[PRESSURE] init failed — check wiring/address.");
   }
+
+  // if (!thbSensor.begin(THB_SENSOR_ADDRESS, &Wire)) {
+  //   Serial.println("[THB] init failed — check wiring/address.");
+  // }
+
+  uvSensor.begin(UV_SENSOR_PIN);
+
 
   Serial.println("[SYSTEM] Setup done");
 }
 
 void loop() {
   displayManager.loop();
-  // wifi.loop();
-  // updateWifiUI(false, wifi.isConnected(), wifi.rssi());
-  // mqtt.loop();
-  // updateMqttUI(false, mqtt.connected(), false, false);
 
-  // if (chargerEvent) {
-  //   manageChargingState();
-  // }
+  if (wifi.isConnected()) {
+    timeSource.syncCurrentTime();
+  }
+  updateTimeSourceUI(false);
 
-  // battery.read();
-  // updateBatteryUI(false);
+  wifi.loop();
+  updateWifiUI(false, wifi.isConnected(), wifi.rssi());
+  mqtt.loop();
+  updateMqttUI(false, mqtt.connected(), false, false);
+
+  if (chargerEvent) {
+    manageChargingState();
+  }
+
+  battery.read();
+  updateBatteryUI(false);
 
   illuminationMeter.read();
   updateIlluminationUI(false);
 
-  // thermohygrometer.read();
-  // updateThermohygrometerUI(false);
+  airQuality.read();
+  updateAirQualityUI(false);
 
-  // airQuality.read();
-  // updateAirQualityUI(false);
+  pressureSensor.read();
+  updatePressureUI(false);
 
-  // pressureSensor.read();
-  // updatePressureUI(false);
+  thermohygrometer.read();
+  updateThermohygrometerUI(false);
 
-  // static uint32_t last = 0;
-  // if (millis() - last > SENSOR_PUBLISH_INTERVAL_MS && mqtt.connected()) {
-  //   last = millis();
+  // thbSensor.read();
+  // updateTHBUI(false);
 
-  //   StaticJsonDocument<256> doc;
-  //   doc["battery_percent"] = battery.percent();
-  //   doc["illumination_lux"] = illuminationMeter.average();
-  //   doc["temperature_c"] = thermohygrometer.average().temperature;
-  //   doc["humidity_percent"] = thermohygrometer.average().humidity;
-  //   doc["air_quality_aqi"] = airQuality.average();
-  //   doc["pressure_pa"] = pressureSensor.average().pressure;
+  uvSensor.read();
+  updateUVIndexUI(uvSensor, false);
 
-  //   char buf[256];
-  //   size_t n = serializeJson(doc, buf, sizeof(buf));
+  static uint32_t last = 0;
+  if (millis() - last > SENSOR_PUBLISH_INTERVAL_MS && mqtt.connected()) {
+    last = millis();
 
-  //   onMqttPublish(MQTT_TOPIC_SENSOR, (const uint8_t*)buf, n, /*retain=*/false);
-  // }
+    StaticJsonDocument<256> doc;
+    doc["battery_percent"] = battery.percent();
+    doc["illumination_lux"] = illuminationMeter.average();
+    doc["temperature_c"] = pressureSensor.average();
+    doc["humidity_percent"] = thermohygrometer.average().humidity;
+    doc["air_quality_aqi"] = airQuality.average();
+    doc["pressure_pa"] = thermohygrometer.average().pressure;
+
+    char buf[256];
+    size_t n = serializeJson(doc, buf, sizeof(buf));
+
+    onMqttPublish(MQTT_TOPIC_SENSOR, (const uint8_t*)buf, n, /*retain=*/false);
+  }
 
   display.loop();
   delay(5);

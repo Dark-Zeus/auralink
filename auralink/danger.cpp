@@ -71,3 +71,16 @@ ColorOpacity getDangerColorLoudness(float db){
     }
 }
 
+ColorOpacity getDangerColorUVIndex(float uvi){
+    if (uvi <= 2.0f) {
+        return {lv_color_hex(0x000000), 0}; // Normal
+    } else if (uvi <= 5.0f) {
+        return {lv_color_hex(0xFFFF00), 80}; // Moderate
+    } else if (uvi <= 7.0f) {
+        return {lv_color_hex(0xFFA500), 80}; // High
+    } else if (uvi <= 10.0f) {
+        return {lv_color_hex(0xFF0000), 80}; // Very High
+    } else {
+        return {lv_color_hex(0x800080), 80}; // Extreme
+    }
+}

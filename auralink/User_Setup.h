@@ -8,19 +8,28 @@
 #define I2C_SDA_PIN 17
 #define I2C_SCL_PIN 18
 
-#define BATTERY_CHARGER_PIN 2
-#define BATTERY_LEVEL_PIN 7
+#define BATTERY_LEVEL_PIN 4
+#define BATTERY_CHARGER_PIN 5
+
+#define TOUCH_LEFT_PIN 16
+#define TOUCH_RIGHT_PIN 15
+
+#define MQ135_PIN 8
+#define UV_SENSOR_PIN 6
 
 #define DHT_PIN 42
 #define DHT_TYPE DHT22
 
 #define ILLUMINATION_SENSOR_ADDRESS 0x5C
+#define THB_SENSOR_ADDRESS 0x76
+
+// Online NTC Time Server
+#define NTP_SERVER "pool.ntp.org"
+// Set timezone offset in seconds: SRI LANKA +5:30 GMT
+#define GMT_OFFSET_SEC 19800
 
 #define SCREEN_W 128
 #define SCREEN_H 160
-
-#define TOUCH_LEFT_PIN 35
-#define TOUCH_RIGHT_PIN 36
 
 #define WIFI_SSID "DarkZeus4G"
 #define WIFI_PASS "dzeus2002"

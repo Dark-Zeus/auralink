@@ -44,8 +44,8 @@ void DisplayManager::begin(lv_obj_t** screens, uint8_t screen_count) {
   lv_scr_load(_screens[_idx]);
 
   if (_p.set_pinmode) {
-    pinMode(_left.pin,  _p.pinmode ? _p.pinmode : INPUT);
-    pinMode(_right.pin, _p.pinmode ? _p.pinmode : INPUT);
+    pinMode(_left.pin,  _p.pinmode ? _p.pinmode : INPUT_PULLDOWN);
+    pinMode(_right.pin, _p.pinmode ? _p.pinmode : INPUT_PULLDOWN);
   }
 
   _self  = this;

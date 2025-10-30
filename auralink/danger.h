@@ -21,3 +21,4 @@ ColorOpacity getDangerColorHumidity(float rh);
 ColorOpacity getDangerColorTemperature(float celsius);
 ColorOpacity getDangerColorPressure(float hpa);
 ColorOpacity getDangerColorLoudness(float db);
+ColorOpacity getDangerColorUVIndex(float uvi);
